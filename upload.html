@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Document</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Upload Form -->
+    <div class="container my-5">
+        <h2>Upload Document</h2>
+        <form id="uploadForm">
+            <div class="mb-3">
+                <label for="label" class="form-label">Document Label</label>
+                <input type="text" class="form-control" id="label" required>
+            </div>
+            <div class="mb-3">
+                <label for="file" class="form-label">File</label>
+                <input type="file" class="form-control" id="file" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+    </div>
+
+    <!-- Table to Display Uploaded Documents -->
+    <div class="container my-5">
+        <h2>Uploaded Documents</h2>
+        <table class="table table-striped" id="documentsTable">
+            <thead>
+                <tr>
+                    <th scope="col">Label</th>
+                    <th scope="col">File Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Document rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Script to handle Upload -->
+    <script>
+        // Get the form and table elements
+        const uploadForm = document.getElementById('uploadForm');
+        const documentsTable = document.getElementById('documentsTable').getElementsByTagName('tbody')[0];
+
+        // Load saved documents from localStorage when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDocuments();
+        });
+
+        // Handle form submission for document upload
+        uploadForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const label = document.getElementById('label').value;
+            const fileInput = document.getElementById('file');
+            const fileName = fileInput.files[0].name;
+
+            // Save document information in localStorage
+            const documents = JSON.parse(localStorage.getItem('documents')) || [];
+            const newDocument = { label, fileName };
+            documents.push(newDocument);
+            localStorage.setItem('documents', JSON.stringify(documents));
+
+            // Reset the form
+            uploadForm.reset();
+
+            // Reload the document list
+            loadDocuments();
+        });
+
+        // Load documents from localStorage and display in the table
+        function loadDocuments() {
+            const documents = JSON.parse(localStorage.getItem('documents')) || [];
+            documentsTable.innerHTML = ''; // Clear the table before adding rows
+            documents.forEach(doc => {
+                const row = documentsTable.insertRow();
+                row.innerHTML = `<td>${doc.label}</td><td>${doc.fileName}</td>`;
+            });
+        }
+    </script>
+
+</body>
+</html>
